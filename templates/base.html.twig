@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}Welcome!{% endblock %}</title>
+        <link rel="icon" href="{{ asset('images/favicon.png') }}">
+
+        {% block stylesheets %}
+        {% endblock %}
+
+        {% block javascripts %}
+            {% block importmap %}{{ importmap('app') }}{% endblock %}
+        {% endblock %}
+    </head>
+    <header>
+        <img src="{{ asset('images/logo.png') }}">
+        <h1>Bucket-List</h1>
+        <nav>
+            <ul style="display: flex; flex-direction: row; list-style: none">
+                <li style="padding: 5px;"><a href="{{ path('app_home') }}">Home</a></li>
+                <li style="padding: 5px;"><a href="{{ path('app_about') }}">About Us</a></li>
+                <li style="padding: 5px;"><a href="{{ path('app_liste') }}">Wish list</a></li>
+                <li style="padding: 5px;"><a href="{{ path('app_create') }}">Add yours !</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <body>
+
+        {% block body %}{% endblock %}
+
+    <div class="container">
+        <footer class="text-center text-black">
+            <div class="text-center p-3">
+               <p>©Bucket-List {{ "now"|date("Y") }}</p>
+            </div>
+        </footer>
+    </div>
+
+    </body>
+
+
+</html>
