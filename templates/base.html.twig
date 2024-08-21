@@ -6,6 +6,7 @@
         <link rel="icon" href="{{ asset('images/favicon.png') }}">
 
         {% block stylesheets %}
+            <link rel="stylesheet" href="{{ asset('css/app.css') }}">
         {% endblock %}
 
         {% block javascripts %}
@@ -13,29 +14,32 @@
         {% endblock %}
     </head>
     <header>
-        <img src="{{ asset('images/logo.png') }}">
-        <h1>Bucket-List</h1>
-        <nav>
-            <ul style="display: flex; flex-direction: row; list-style: none">
-                <li style="padding: 5px;"><a href="{{ path('app_home') }}">Home</a></li>
-                <li style="padding: 5px;"><a href="{{ path('app_about') }}">About Us</a></li>
-                <li style="padding: 5px;"><a href="{{ path('app_liste') }}">Wish list</a></li>
-                <li style="padding: 5px;"><a href="{{ path('app_create') }}">Add yours !</a></li>
-            </ul>
-        </nav>
+        <div class="container">
+            <h1 class="header-logo">
+                <a href="{{ path('app_home') }}" title="Go back to homepage">
+                    <img src="{{ asset('images/logo.svg') }}"
+                         alt="Bucket-List Logo">
+                    Bucket-List
+                </a>
+            </h1>
+            {% include('navbar.html.twig') %}
+        </div>
     </header>
 
-    <body>
+    <body class="d-flex flex-column">
 
-        {% block body %}{% endblock %}
+    <main class="flex-grow-1">
+        <div class="container">
+            {% block body %}{% endblock %}
+        </div>
+    </main>
 
-    <div class="container">
-        <footer class="text-center text-black">
-            <div class="text-center p-3">
-               <p>©Bucket-List {{ "now"|date("Y") }}</p>
-            </div>
-        </footer>
-    </div>
+
+    <footer>
+        <div class="container">
+            &copy; Bucket-List {{ "now"|date("Y") }}
+        </div>
+    </footer>
 
     </body>
 
