@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\Wish;
+use App\Form\SerieType;
 use App\Form\WishType;
+use App\Repository\SerieRepository;
 use App\Repository\WishRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -14,11 +16,11 @@ use Symfony\Component\Routing\Attribute\Route;
 class WishController extends AbstractController
 {
     #[Route('/wishes', name: 'app_liste')]
-    public function liste(WishRepository $wishRepository): Response
+    public function list(WishRepository $wishRepository): Response
     {
-        $wishes = $wishRepository->findAll();
+        $wishes = $wishRepository->findBy(['isPublished' => true], ['dateCreated' => 'DESC']);
 
-        return $this->render('main/wish-list.html.twig', [
+        return $this->render('wish/wish-list.html.twig', [
             'wishes' => $wishes]);
     }
 
@@ -27,7 +29,11 @@ class WishController extends AbstractController
     {
         $wish = $wishRepository->find($id);
 
-        return $this->render('main/wish-detail.html.twig', [
+        if(!$wish) {
+            throw $this->createNotFoundException('Wish not found');
+        }
+
+        return $this->render('wish/wish-detail.html.twig', [
             'wish' => $wish
         ]);
     }
@@ -40,20 +46,72 @@ class WishController extends AbstractController
         $form = $this->createForm(WishType::class, $wish);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted()) {
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $wish->setPublished(true);
 
             $em->persist($wish);
             $em->flush();
 
             $this->addFlash('success', 'Idea successfully added!');
 
-            return $this->redirectToRoute('app_liste');
+            return $this->redirectToRoute('app_detail', ['id' => $wish->getId()]);
         }
 
-        return $this->render('main/wish-create.html.twig', [
+        return $this->render('wish/wish-create.html.twig', [
             'wish_form' => $form
             ]);
 
     }
+
+    #[Route('/update/{id}', name: 'app_update', requirements: ['id' => '\d+'])]
+    public function update(Request $request,
+                           EntityManagerInterface $em,
+                           WishRepository $wishRepository,
+                           int $id): Response
+    {
+        $wish = $wishRepository->find($id);
+
+        if(!$wish){
+            throw $this->createNotFoundException('Wish not found');
+        }
+
+        $form = $this->createForm(WishType::class, $wish);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $wish->setDateUpdated(new \DateTimeImmutable());
+            $em->flush();
+
+            $this->addFlash('success', 'Un wish a été modifié');
+
+            return $this->redirectToRoute('app_detail', ['id' => $wish->getId()]);
+        }
+
+        return $this->render('wish/wish-create.html.twig', [
+            'wish_form' => $form
+        ]);
+    }
+
+    #[Route('/wishes/{id}/delete', name: 'app_delete', requirements: ['id' => '\d+'], methods: ['GET'])]
+    public function delete(Request $request,
+                           EntityManagerInterface $em,
+                           WishRepository $wishRepository,
+                           int $id): Response
+    {
+        $wish = $wishRepository->find($id);
+        if(!$wish){
+            throw $this->createNotFoundException('Wish not found');
+        }
+        if($this->isCsrfTokenValid('delete'.$id, $request->query->get('token'),)){
+            $em->remove($wish, true);
+            $this->addFlash('success', 'Wish successfully deleted!');
+        } else {
+            $this->addFlash('danger', 'This wish can not be deleted!');
+        }
+        return $this->redirectToRoute('app_liste');
+    }
+
+
 
 }
