@@ -10,6 +10,7 @@
     {{ form_row(wish_form.title) }}
     {{ form_row(wish_form.description) }}
     {{ form_row(wish_form.author) }}
+    {{ form_row(wish_form.category) }}
     {{ form_row(wish_form.isPublished) }}
     <button class="btn btn-sm btn-primary">{{ wish_form.vars.value.id == null ?
         'Create' : 'Modify' }}</button>

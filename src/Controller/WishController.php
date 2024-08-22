@@ -3,9 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Wish;
-use App\Form\SerieType;
 use App\Form\WishType;
-use App\Repository\SerieRepository;
 use App\Repository\WishRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,10 +16,13 @@ class WishController extends AbstractController
     #[Route('/wishes', name: 'app_liste')]
     public function list(WishRepository $wishRepository): Response
     {
-        $wishes = $wishRepository->findBy(['isPublished' => true], ['dateCreated' => 'DESC']);
+//        $wishes = $wishRepository->findBy(['isPublished' => true], ['dateCreated' => 'DESC']);
+
+        $wishes = $wishRepository->findPublishedWishesWithCategories();
 
         return $this->render('wish/wish-list.html.twig', [
-            'wishes' => $wishes]);
+            'wishes' => $wishes
+        ]);
     }
 
     #[Route('/wish/{id}', name: 'app_detail', requirements: ['id' => '\d+'])]
@@ -47,6 +48,9 @@ class WishController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            foreach ($wish->getCategories() as $cat) {
+                $cat->addWish($wish);
+            }
 
             $wish->setPublished(true);
 
@@ -104,7 +108,8 @@ class WishController extends AbstractController
             throw $this->createNotFoundException('Wish not found');
         }
         if($this->isCsrfTokenValid('delete'.$id, $request->query->get('token'),)){
-            $em->remove($wish, true);
+            $em->remove($wish);
+            $em->flush();
             $this->addFlash('success', 'Wish successfully deleted!');
         } else {
             $this->addFlash('danger', 'This wish can not be deleted!');

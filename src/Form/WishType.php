@@ -2,10 +2,12 @@
 
 namespace App\Form;
 
+use App\Entity\Category;
 use App\Entity\Wish;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -28,6 +30,12 @@ class WishType extends AbstractType
             ])
             ->add('isPublished', CheckboxType::class,
                 ['required' => false, 'label' => 'Published',
+            ])
+            ->add('category', EntityType::class, [
+                'label' => 'Category',
+                'class' => Category::class,
+                'choice_label' => 'name',
+                'placeholder' => ' -- Choose a catégory -- ',
             ])
         ;
     }
