@@ -16,9 +16,25 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ path('app_liste') }}" title="Go to Wishlist">Wish list</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ path('app_create') }}" title="Go to create a wish">Add yours !</a>
-                </li>
+                {% if is_granted('IS_AUTHENTICATED') %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_create') }}" title="Go to create a wish">Add yours !</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_logout') }}" title="Logout">Logout</a>
+                    </li>
+                    <li>
+                        <a class="nav-link" href="" title="Message">Hello [{{ app.user.username }}] !</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_register') }}" title="Register">Register</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_login') }}" title="Login">Login</a>
+                    </li>
+                {% endif %}
+
             </ul>
         </div>
     </div>

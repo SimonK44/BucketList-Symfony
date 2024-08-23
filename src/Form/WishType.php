@@ -25,9 +25,6 @@ class WishType extends AbstractType
                 'label' => 'Please describe it!',
                 'required' => false,
             ])
-            ->add('author', TextType::class, [
-                'label' => 'Your username',
-            ])
             ->add('isPublished', CheckboxType::class,
                 ['required' => false, 'label' => 'Published',
             ])

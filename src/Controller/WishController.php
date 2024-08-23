@@ -43,6 +43,7 @@ class WishController extends AbstractController
     public function create(Request $request, EntityManagerInterface $em): Response
     {
         $wish = new Wish();
+        $wish->setUser($this->getUser());
 
         $form = $this->createForm(WishType::class, $wish);
         $form->handleRequest($request);
@@ -80,6 +81,10 @@ class WishController extends AbstractController
             throw $this->createNotFoundException('Wish not found');
         }
 
+        if ($wish->getUser() !== $this->getUser()) {
+            throw $this->createAccessDeniedException();
+        }
+
         $form = $this->createForm(WishType::class, $wish);
         $form->handleRequest($request);
 
@@ -107,6 +112,11 @@ class WishController extends AbstractController
         if(!$wish){
             throw $this->createNotFoundException('Wish not found');
         }
+
+        if (!($wish->getUser() === $this->getUser() || $this->isGranted('ROLE_ADMIN'))) {
+            throw $this->createAccessDeniedException();
+        }
+
         if($this->isCsrfTokenValid('delete'.$id, $request->query->get('token'),)){
             $em->remove($wish);
             $em->flush();
