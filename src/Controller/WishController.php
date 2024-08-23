@@ -48,7 +48,7 @@ class WishController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            foreach ($wish->getCategories() as $cat) {
+            foreach ($wish->getCategory() as $cat) {
                 $cat->addWish($wish);
             }
 

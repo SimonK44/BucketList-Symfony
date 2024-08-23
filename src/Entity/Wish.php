@@ -147,7 +147,7 @@ class Wish
         return $this;
     }
 
-    public function getCategory(): Collection
+    public function getCategory(): ?Category
     {
         return $this->category;
     }

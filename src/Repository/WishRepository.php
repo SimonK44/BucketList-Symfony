@@ -21,7 +21,7 @@ class WishRepository extends ServiceEntityRepository
         $queryBuilder = $this->createQueryBuilder('w');
         $queryBuilder->join('w.category', 'c')
             ->addSelect('c');
-        $queryBuilder->andWhere('w.published = 1');
+        $queryBuilder->andWhere('w.isPublished = 1');
         $queryBuilder->orderBy('w.dateCreated', 'DESC');
 
         $query = $queryBuilder->getQuery();

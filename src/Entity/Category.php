@@ -28,10 +28,10 @@ class Category
     #[ORM\OneToMany(targetEntity: Wish::class, mappedBy: 'category')]
     private Collection $wishes;
 
-    public function __construct()
-    {
-        $this->wishes = new ArrayCollection();
-    }
+//    public function __construct()
+//    {
+//        $this->wishes = new ArrayCollection();
+//    }
 
     public function getId(): ?int
     {
