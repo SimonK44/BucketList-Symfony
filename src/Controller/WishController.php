@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Wish;
 use App\Form\WishType;
 use App\Repository\WishRepository;
+use App\Util\Censurator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -40,7 +41,7 @@ class WishController extends AbstractController
     }
 
     #[Route('/wishes/create', name: 'app_create')]
-    public function create(Request $request, EntityManagerInterface $em): Response
+    public function create(Request $request, EntityManagerInterface $em, Censurator $censurator): Response
     {
         $wish = new Wish();
         $wish->setUser($this->getUser());
@@ -49,6 +50,7 @@ class WishController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $wish->setDescription($censurator->purify($wish->getDescription()));
             foreach ($wish->getCategory() as $cat) {
                 $cat->addWish($wish);
             }
@@ -73,7 +75,8 @@ class WishController extends AbstractController
     public function update(Request $request,
                            EntityManagerInterface $em,
                            WishRepository $wishRepository,
-                           int $id): Response
+                           int $id,
+                           Censurator $censurator): Response
     {
         $wish = $wishRepository->find($id);
 
@@ -89,6 +92,7 @@ class WishController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $wish->setDescription($censurator->purify($wish->getDescription()));
             $wish->setDateUpdated(new \DateTimeImmutable());
             $em->flush();
 
